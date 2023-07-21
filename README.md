@@ -1,6 +1,6 @@
 My submission for the Unity Developer position at Metaverse Development.
 
-Controls: 
+Controls:  
 
 Moving around: WASD
 Open Text Panel: "~"
