@@ -2,9 +2,9 @@ My submission for the Unity Developer position at Metaverse Development.
 
 Controls:  
 
-Moving around: WASD
-Open Text Panel: "~"
-Quit Application: "Escape"
+&nbsp;Moving around: WASD
+&nbsp;Open Text Panel: "~"
+&nbsp;Quit Application: "Escape"
 
 Which scene to open:
 
