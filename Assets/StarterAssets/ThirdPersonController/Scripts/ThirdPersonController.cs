@@ -86,6 +86,7 @@ namespace StarterAssets
         private float _rotationVelocity;
         private float _verticalVelocity;
         private float _terminalVelocity = 53.0f;
+        private bool _canMove = true;
 
         // timeout deltatime
         private float _jumpTimeoutDelta;
@@ -156,9 +157,15 @@ namespace StarterAssets
         {
             _hasAnimator = TryGetComponent(out _animator);
 
+            if (Input.GetKeyUp(KeyCode.BackQuote))
+            {
+                _canMove = !_canMove;
+            }
+
             JumpAndGravity();
             GroundedCheck();
-            Move();
+            if(_canMove)
+                Move();
         }
 
         private void LateUpdate()

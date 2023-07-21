@@ -54,6 +54,8 @@ namespace Inworld.Sample
                 if (m_TriggerCanvas)
                     m_TriggerCanvas.SetActive(!m_TriggerCanvas.activeSelf);
             }
+            if (Input.GetKeyDown(KeyCode.Escape))
+                Application.Quit();
             UpdateSendText();
         }
         #endregion

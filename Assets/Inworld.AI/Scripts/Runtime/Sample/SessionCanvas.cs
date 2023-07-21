@@ -127,14 +127,16 @@ namespace Inworld.Sample
             {
                 if (m_IsConnecting)
                 {
-                    Ping ping = new Ping(ipv4);
-                    while (!ping.isDone && m_CurrentDuration < m_PingDuration)
-                    {
-                        m_CurrentDuration += Time.fixedDeltaTime;
-                        yield return new WaitForFixedUpdate();
-                    }
-                    m_CurrentDuration = 0;
-                    _UpdatePing(ping.isDone ? ping.time : 1000);
+                    #if !UNITY_WEBGL
+                        Ping ping = new Ping(ipv4);
+                        while (!ping.isDone && m_CurrentDuration < m_PingDuration)
+                        {
+                            m_CurrentDuration += Time.fixedDeltaTime;
+                            yield return new WaitForFixedUpdate();
+                        }
+                        m_CurrentDuration = 0;
+                        _UpdatePing(ping.isDone ? ping.time : 1000);
+                    #endif
                 }
                 yield return new WaitForSeconds(m_PingDuration);
             }

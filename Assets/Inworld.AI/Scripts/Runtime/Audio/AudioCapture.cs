@@ -8,6 +8,7 @@ using Google.Protobuf;
 using Inworld.Util;
 using System;
 using UnityEngine;
+using UnityEditor;
 using UnityEngine.Events;
 using System.Collections.Generic;
 
@@ -39,6 +40,9 @@ namespace Inworld
 
         public void StartRecording(bool autoPush = true)
         {
+        #if !UNITY_WEBGL
+        //YOUR Microphone CODE HERE
+
             if (!Microphone.IsRecording(null))
                 m_Recording = Microphone.Start(null, true, m_BufferSeconds, m_AudioRate);
             m_LastPosition = Microphone.GetPosition(null);
@@ -46,14 +50,17 @@ namespace Inworld
             IsCapturing = true;
             m_AutoPush = autoPush;
             OnRecordingStart.Invoke();
+        #endif
         }
         public void StopRecording()
         {
+        #if !UNITY_WEBGL
             Microphone.End(null);
             m_AudioToPush.Clear();
             IsCapturing = false;
             m_AutoPush = true;
             OnRecordingEnd.Invoke();
+        #endif
         }
         void Awake()
         {
@@ -63,14 +70,18 @@ namespace Inworld
         }
         void Start()
         {
-            m_Recording = Microphone.Start(null, true, m_BufferSeconds, m_AudioRate);
+            #if !UNITY_WEBGL
+                m_Recording = Microphone.Start(null, true, m_BufferSeconds, m_AudioRate);
+            #endif
         }
         void Update()
         {
             if (!IsCapturing)
                 return;
-            if (!Microphone.IsRecording(null))
-                StartRecording();
+            #if !UNITY_WEBGL
+                if (!Microphone.IsRecording(null))
+                    StartRecording();
+            #endif
             if (m_CDCounter <= 0)
             {
                 m_CDCounter = 0.1f;
@@ -84,21 +95,24 @@ namespace Inworld
         }
         void _Collect()
         {
-            int nPosition = Microphone.GetPosition(null);
-            if (nPosition < m_LastPosition)
-                nPosition = m_BufferSize;
-            if (nPosition <= m_LastPosition)
-                return;
-            int nSize = nPosition - m_LastPosition;
-            if (!m_Recording.GetData(m_FloatBuffer, m_LastPosition))
-                return;
-            m_LastPosition = nPosition % m_BufferSize;
-            WavUtility.ConvertAudioClipDataToInt16ByteArray(m_FloatBuffer, nSize * m_Recording.channels, m_ByteBuffer);
-            ByteString audioData = ByteString.CopyFrom(m_ByteBuffer, 0, nSize * m_Recording.channels * k_SizeofInt16);
-            if (m_AutoPush)
-                InworldController.Instance.SendAudio(audioData);
-            else
-                m_AudioToPush.Add(audioData);
+            #if !UNITY_WEBGL
+                int nPosition = Microphone.GetPosition(null);
+                
+                if (nPosition < m_LastPosition)
+                    nPosition = m_BufferSize;
+                if (nPosition <= m_LastPosition)
+                    return;
+                int nSize = nPosition - m_LastPosition;
+                if (!m_Recording.GetData(m_FloatBuffer, m_LastPosition))
+                    return;
+                m_LastPosition = nPosition % m_BufferSize;
+                WavUtility.ConvertAudioClipDataToInt16ByteArray(m_FloatBuffer, nSize * m_Recording.channels, m_ByteBuffer);
+                ByteString audioData = ByteString.CopyFrom(m_ByteBuffer, 0, nSize * m_Recording.channels * k_SizeofInt16);
+                if (m_AutoPush)
+                    InworldController.Instance.SendAudio(audioData);
+                else
+                    m_AudioToPush.Add(audioData);
+            #endif
         }
         public void PushAudio() 
         {
