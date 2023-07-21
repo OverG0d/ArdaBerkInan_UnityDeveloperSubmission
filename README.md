@@ -1,4 +1,4 @@
-My submission for the Unity Developer position at Metaverse Development.
+My submission for the Unity Game Developer position at Metaverse Development.
 
 Controls:  
 
